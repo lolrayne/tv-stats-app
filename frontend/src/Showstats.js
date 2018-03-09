@@ -6,8 +6,8 @@ import Stats from './Stats'
 class Showstats extends Component {
     render() {
       return (
-        <div className="statsDisplay">
-            <p>Here's your search results</p>
+        <div class="center-align">
+            <h5>Here's your search results</h5>
             <ul>
                 <Stats />
             </ul>

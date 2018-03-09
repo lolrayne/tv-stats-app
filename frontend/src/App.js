@@ -4,6 +4,7 @@ import axios from 'axios';
 import Showstats from './Showstats';
 import key from './config';
 
+
 let config = {
   headers: {"Content-Type":"application/json","trakt-api-version":2,"trakt-api-key":key.SECRET_KEY}
 }
@@ -46,6 +47,7 @@ class App extends Component {
               return axios.get(url)
             }
             else{
+   
               this.setState({
                 exists:false
               })
@@ -88,16 +90,31 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
-          <h1>When TV shows started to suck</h1>
+
+    <div class="container">
+      <div class="center-align">
+      <div class="card-panel blue lighten-4 col 4">
+        <h1>When TV shows started to suck</h1>
+      </div>
+      </div>
+
+      <div class="input-field col s3">  
           <form onSubmit={this.fetchShow}>
             <input type="text" ref="show" />
+          <div class = "waves-effect waves-light btn blue accent-2">
             <input type="submit" />
+          </div>
           </form>
-
-
+      
           <Showstats data={this.state.seasonData}/>
       </div>
+
+        
+    </div>
+
+      
+
+      
     );
   }
 }
