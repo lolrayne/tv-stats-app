@@ -1,12 +1,23 @@
 import React, { Component } from 'react';
 import Chart from 'chart.js'
 
+var ctx
+var myChart
+
 
 class Showstats extends Component {
+  componentDidMount(){
+    ctx = document.getElementById('myChart').getContext('2d');
+    myChart=new Chart(ctx,{})
+  }
+
   componentDidUpdate(){
     console.log("Data Recieved",this.props.seasonStats)
-    var ctx = document.getElementById('myChart').getContext('2d');
-    var myChart = new Chart(ctx, {
+    // document.getElementById('myChart').remove();
+    // document.getElementById('graph-container').append('<canvas id="myChart"></canvas>')
+    myChart.destroy()
+    ctx = document.getElementById('myChart').getContext('2d');
+    myChart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: ["1", "2", "3", "4", "5", "6", "7"],
@@ -32,11 +43,9 @@ class Showstats extends Component {
  }
     render() {
       return (
-        <div class="center-align">
-            <h5>Here's your search results</h5>
-            <ul>
-                <Stats />
-            </ul>
+        <div className="statsDisplay" id="graph-container">
+            <p>Here are the show season stats!</p>
+            <canvas id="myChart"></canvas>  
         </div>
       );
     }
