@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import './App.css';
 import axios from 'axios';
+
 import Showstats from './Showstats';
+import ShowDetails from './ShowDetails';
+
 import key from './config';
 
 
@@ -9,23 +12,12 @@ let config = {
   headers: {"Content-Type":"application/json","trakt-api-version":2,"trakt-api-key":key.SECRET_KEY}
 }
 
-// const url = "https://api.trakt.tv/shows/game-of-thrones/seasons/2/stats"
-
-// axios.get(url,config)
-//   .then(result => {
-//     console.log(result.data);
-//   })
-//   .catch(error => {
-//     console.log(error)
-//   })
-
-
 class App extends Component {
   constructor(){
     super()
     this.state = {
       seasonData:{},
-      seasonStats:{}, 
+      seasonStats:[], 
       exists: false
     }
     this.fetchShow=this.fetchShow.bind(this)
@@ -54,41 +46,43 @@ class App extends Component {
             }
       })
       .then(result=>{
-        // let totalSeasons=Number(result.data.totalSeasons)
-        let totalSeasons=2;
-        let showName= result.data.Title.toLowerCase().split(' ').join('-')
-        console.log(showName)
-        let urlArray=[];
-        for(let i=1;i<=totalSeasons;i++){
-          url = axios.get("https://api.trakt.tv/shows/"+showName+"/seasons/"+i+'/stats', config)
-          urlArray.push(url)
-        }
-        return Promise.all(urlArray)
+            this.setState({
+              seasonData: result.data
+            })
+
+            let totalSeasons=Number(result.data.totalSeasons)
+            console.log("Total seasons:",totalSeasons)
+            if(totalSeasons>7){
+              totalSeasons=7
+            }
+
+            let showName= result.data.Title.toLowerCase().split(' ').join('-')
+            console.log(showName)
+
+            let urlArray=[];
+            for(let i=1;i<=totalSeasons;i++){
+              url = axios.get("https://api.trakt.tv/shows/"+showName+"/seasons/"+i+'/stats', config)
+              urlArray.push(url)
+            }
+
+            return Promise.all(urlArray)
       })
       .then(results=>{
-        console.log(results)
+            results=results.map((result)=>{return Number(result.data.watchers)})
+            console.log(results)
+            this.setState({
+                        seasonStats: results
+                        })
+        
       })
       .catch(error => {
-        console.log(error)
-      })
-
-      
+            console.log(error)
+      })  
   }
 
-  // if ((movie_data.Response)==="False")
-  // {
-  //     //res.send('Movie you entered was not found!');
-  //     req.answer=false;
-  //     next();
-  // }
-  // else {
-  //     id=movie_data.Search[0].imdbID;
-  //     api_url_2="http://www.omdbapi.com/?apikey=f6960a9&i="+id;
-  //     request(api_url_2, function(error, response, body){
-
-
-
   render() {
+    console.log("season stats state", this.state.seasonStats)
+    console.log("season data state", this.state.seasonData)
     return (
 
     <div class="container">
@@ -105,8 +99,9 @@ class App extends Component {
             <input type="submit" />
           </div>
           </form>
-      
-          <Showstats data={this.state.seasonData}/>
+
+          <ShowDetails seasonData={this.state.seasonData}/>
+          <Showstats seasonStats={this.state.seasonStats}/>
       </div>
 
         
